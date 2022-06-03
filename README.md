@@ -18,3 +18,28 @@
 # SCREENSHOTS
 
 
+<p align="center">
+Menu
+</p>
+<p align="center">
+<img src="data/Screenshot-98.png" width=400/>
+</p>
+<p align="center">
+Serving Animation
+</p>
+<p align="center">
+<img src="data/Screenshot-300.png" width=400/>
+</p>
+<p align="center">
+Throwing
+</p>
+<p align="center">
+<img src="data/Screenshot-444.png" width=400/>
+</p>
+
+<p align="center">
+In-Game
+</p>
+<p align="center">
+<img src="data/Screenshot-622.png" width=400/>
+</p>
