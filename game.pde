@@ -1,4 +1,3 @@
-
 class Game{
   GAME_STATES     m_states;
   Ball            m_ball;
