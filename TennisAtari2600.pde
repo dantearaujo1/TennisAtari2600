@@ -51,6 +51,8 @@ void reset(Player p1, Player p2, Ball b){
   p1.init(0,0,-1);
   p2.init(0,0,1);
   game.startServe(p2,p1,b);
+  game.m_blockers.clear();
+  game.createBlockers();
 }
 float getDeltaTime(){
   return DT;

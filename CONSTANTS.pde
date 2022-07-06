@@ -16,3 +16,4 @@ final float FRAME_RATE = 60.0f;
 final float DT = 1.0/FRAME_RATE;
 
 final int PLAYERS_PLAYING = 2;
+final int INITIAL_BLOCKERS = 0;

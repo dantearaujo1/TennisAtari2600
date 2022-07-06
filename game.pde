@@ -6,6 +6,7 @@ class Game{
   Net             m_net;
   int             m_activePlayers;
   int             m_menuChoice;
+  ArrayList<Blocker>       m_blockers;
 
   InputContext[]  m_contexts;
 
@@ -20,6 +21,8 @@ class Game{
 
   GAME_STATES     m_state;
 
+  color           m_colorDebug;
+
   Game(){
     init();
   }
@@ -33,7 +36,9 @@ class Game{
     m_ball =          new Ball(0,0,15);
     m_players =       new Player[4];
     m_contexts =      new InputContext[10];
+    m_blockers =      new ArrayList<Blocker>();
     m_gameTitle =     "Tennis Atari 2600";
+
     for(int i = 1; i <= PLAYERS_PLAYING; i++){
       if(i % 2 == 0){
         m_players[i-1] =    new Player(0,0,i,1);
@@ -42,20 +47,30 @@ class Game{
         m_players[i-1] =    new Player(0,0,i,2);
       }
       m_activePlayers++;
-
     }
+
     m_players[1].setColor(0,color(255,0,0));
     m_players[1].setColor(1,color(134,50,200));
     m_players[1].setColor(2,color(0,255,0));
     m_net =         m_court.getNet();
     m_state =       GAME_STATES.GAME_MENU;
     m_debug =       false;
+    m_colorDebug = color(255,255,255);
 
+
+    createBlockers();
     initControllerContexts();
     loadController("controller.dante");
     startServe(m_players[0],m_players[1],m_ball);
 
   }
+
+  void createBlockers(){
+    for(int i = 0; i < INITIAL_BLOCKERS; i++){
+      m_blockers.add(new Blocker(int(random(m_net.m_x,m_net.m_x+m_net.m_size.x)),int(m_net.m_y-m_net.m_size.y-15)));
+    }
+  }
+
   void initControllerContexts(){
     // from 0 to 3 are players contexts
     // 1 context for debug = 4 contexts;
@@ -135,12 +150,35 @@ class Game{
     m_lastTime = m_currentTime;
 
     if (m_deltaTime >= DT){
+      m_deltaTime -= DT;
       if(m_state == GAME_STATES.GAME_MENU){
 
       }
       else{
-        m_deltaTime -= DT;
+        if(random(1) > 0.9990){
+          m_blockers.add(new Blocker(int(random(m_net.m_x,m_net.m_x+m_net.m_size.x)),int(m_net.m_y - m_net.m_size.y - 15)));
+        }
         m_ball.update(this,m_court,m_net);
+
+        for(Blocker b : m_blockers){
+          b.update(DT);
+          if(CollisionCR(m_ball.m_x,m_ball.m_y,m_ball.getBallDiameter()/2,b.m_x,b.m_y,b.m_width,b.m_height)){
+            m_ball.m_state = BALL_STATES.STOPPED;
+          }
+
+          // Debug Purpouse
+          if(getDebug()){
+            if(CollisionCR(mouseX,mouseY,5,b.m_x,b.m_y,b.m_width,b.m_height)){
+              /* m_ball.m_state = BALL_STATES.STOPPED; */
+              m_colorDebug = color(255,0,0);
+            }
+            else{
+              m_colorDebug = color(255,255,255);
+            }
+          }
+          // ==================================================================
+        }
+
 
         for (int player = 0; player < m_activePlayers; player++){
           Player p = m_players[player];
@@ -166,6 +204,9 @@ class Game{
     // Should draw Player 2 and 4 if they exist
     if(m_players[1] != null) m_players[1].draw();
     if(m_players[3] != null)m_players[3].draw();
+    for(Blocker b : m_blockers){
+      b.draw();
+    }
     if (m_ball.getSide() == 1){
       m_ball.draw();
       m_court.drawNet();
@@ -177,6 +218,12 @@ class Game{
     // Should draw Player 1 and 3if they exist
     if(m_players[0] != null)m_players[0].draw();
     if(m_players[2] != null)m_players[2].draw();
+    if(getDebug()){
+      pushStyle();
+      fill(m_colorDebug);
+      circle(mouseX,mouseY,10);
+      popStyle();
+    }
 
   }
   void drawMenu(){
