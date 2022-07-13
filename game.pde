@@ -18,6 +18,7 @@ class Game{
   String          m_gameTitle;;
 
   boolean         m_debug;
+  boolean         m_deuce;
 
   GAME_STATES     m_state;
 
@@ -155,25 +156,31 @@ class Game{
 
       }
       else{
-        if(random(1) > 0.9990){
+        if(random(1) > 0.70 && m_blockers.size() < TOTAL_BLOCKERS){
           m_blockers.add(new Blocker(int(random(m_net.m_x,m_net.m_x+m_net.m_size.x)),int(m_net.m_y - m_net.m_size.y - 15)));
         }
+
         m_ball.update(this,m_court,m_net);
+        m_colorDebug = color(255,255,255);
 
         for(Blocker b : m_blockers){
           b.update(DT);
-          if(CollisionCR(m_ball.m_x,m_ball.m_y,m_ball.getBallDiameter()/2,b.m_x,b.m_y,b.m_width,b.m_height)){
-            m_ball.m_state = BALL_STATES.STOPPED;
+          PVector ball = m_ball.getBallPosition();
+          if(CollisionCR(ball.x,ball.y,m_ball.getBallDiameter()/2,b.m_x,b.m_y,b.m_width,b.m_height)){
+            m_ball.setState(BALL_STATES.STOPPED);
+            giveScoreTo(m_ball.m_lastHit);
+            setState(GAME_STATES.GAME_POINT);
+            startServe(m_players[0],m_players[1],m_ball);
+            return;
+
           }
 
           // Debug Purpouse
           if(getDebug()){
             if(CollisionCR(mouseX,mouseY,5,b.m_x,b.m_y,b.m_width,b.m_height)){
-              /* m_ball.m_state = BALL_STATES.STOPPED; */
               m_colorDebug = color(255,0,0);
-            }
-            else{
-              m_colorDebug = color(255,255,255);
+              m_ball.m_state = BALL_STATES.STOPPED;
+              /* giveScoreTo(m_ball.m_lastHit); */
             }
           }
           // ==================================================================
@@ -401,7 +408,7 @@ class Game{
     // When we went to DEUCE MODE
     int difference = abs(p1.getScore() - p2.getScore());
     // This doesn't work when we have same points in advantage mode
-    if(difference < 2 && difference >= 0 && (p1.getScore() > 0 || p2.getScore() > 0) && p1.getScore() <= 10 && p2.getScore() <= 10){
+    if(m_deuce){
       if ((side == 1 && b.getLastHit() == p1 && b.isInside()) || side == 1 && b.getLastHit() == p2){
         p1.addScore(1);
       }
@@ -449,6 +456,7 @@ class Game{
         }
         //DEUCE
         else if (p2.getScore() == 40 && p1.getScore() == 40){
+          m_deuce = true;
           p1.setScore(0);
           p2.setScore(1);
         }
@@ -463,6 +471,35 @@ class Game{
       }
     }
   }
-}
 
+  void giveScoreTo(Player p){
+    Player p2 = (p == m_players[0])?m_players[1]:m_players[0];
+    int difference = abs(p.getScore() - p2.getScore());
+
+    if(m_deuce && difference == 2){
+      p.setScore(0);
+      p2.setScore(0);
+      p2.addGame();
+    }
+    else if(m_deuce && difference != 2){
+      p2.addScore(1);
+    }
+    else{
+      if(p2.getScore() == 30){
+        p2.addScore(10);
+      }
+      else if (p2.getScore() >= 45){
+        p2.setScore(0);
+        p2.setScore(0);
+        p2.addGame();
+      }
+      else{
+        p2.addScore(15);
+      }
+
+    }
+
+  }
+
+}
 
