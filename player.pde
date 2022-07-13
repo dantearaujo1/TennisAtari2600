@@ -470,6 +470,7 @@ class Player {
     m_games++;
     if(m_games == 7){
       addSet();
+      m_games = 0;
     }
   }
 }

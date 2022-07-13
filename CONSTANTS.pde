@@ -17,3 +17,4 @@ final float DT = 1.0/FRAME_RATE;
 
 final int PLAYERS_PLAYING = 2;
 final int INITIAL_BLOCKERS = 0;
+final int TOTAL_BLOCKERS = 3;

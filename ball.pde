@@ -352,6 +352,9 @@ class Ball{
    m_x = x;
    m_y = y + m_currentHeight;
   }
+  void setState(BALL_STATES state){
+    m_state = state;
+  }
   void setShadowPosition(float x, float y){
    m_x = x;
    m_y = y;
