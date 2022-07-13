@@ -12,7 +12,7 @@ class Blocker{
   Blocker(){
     m_x = 0.0;
     m_y = 0.0;
-    m_width = 5.0;
+    m_width = 20.0;
     m_height = 15.0;
     m_dir = new PVector(1,0);
     m_vel = new PVector(5,0);
@@ -22,7 +22,7 @@ class Blocker{
   Blocker(int x, int y){
     m_x = x;
     m_y = y;
-    m_width = 5.0;
+    m_width = 20.0;
     m_height = 15.0;
     m_dir = new PVector(1,0);
     m_vel = new PVector(random(15,30),0);
